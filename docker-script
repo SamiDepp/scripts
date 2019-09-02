@@ -1,0 +1,28 @@
+#### ORACLE -> create container from oracle12c-ee image
+docker run \
+-p 1521:1521 -p 5500:5500 \
+-e ORACLE_SID=orcl \
+-e ORACLE_PWD=password \
+-e ORACLE_MEM=4000 \
+-v  ~/docker/oracle-12c:/opt/oracle/oradata \
+-d oracle12c-ee
+
+###### MYSQL -> create container from mysql image
+
+docker run -p 3306:3306 --name mysql-container -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7.22
+
+#### ADVANCED WITH CONF FILE + VOLUME
+
+docker volume create --driver local \
+    --opt type=none \
+    --opt device=~/docker/mysql/etc \
+    --opt o=bind \
+    mysql_vol
+
+docker run -d \
+-p 3306:3306 \
+-e MYSQL_ROOT_PASSWORD=root \
+-v ~/docker/mysql/var/lib:/var/lib/mysql \
+-v mysql_vol:/etc/mysql \
+--name mysql-container \
+mysql:5.7.22
